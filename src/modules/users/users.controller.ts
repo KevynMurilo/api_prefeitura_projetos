@@ -3,15 +3,16 @@ import {
   Get,
   Post,
   Body,
-  // Patch,
   Param,
   Delete,
   Query,
+  Patch,
 } from '@nestjs/common';
 
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-// import { UpdateUserDto } from './dto/update-user.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -22,9 +23,22 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @Post('sendEmailResetPassword')
+  async forgotPassword(@Body('email') email: string) {
+    return await this.usersService.sendEmailUpdatePassword(email);
+  }
+
+  @Post('reset-password')
+  async resetPassword(
+    @Query('token') token: string,
+    @Body() resetPasswordDto: ResetPasswordDto,
+  ) {
+    return await this.usersService.resetPassword(token, resetPasswordDto);
+  }
+
   @Get('verify')
   async create(@Query('token') token: string) {
-    return await this.usersService.verifyUser(token);
+    return await this.usersService.verifyEmailUser(token);
   }
 
   @Get()
@@ -42,10 +56,10 @@ export class UsersController {
     return await this.usersService.findOne(+id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.usersService.update(+id, updateUserDto);
-  // }
+  @Patch('updateUser/:id')
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return await this.usersService.update(+id, updateUserDto);
+  }
 
   @Delete(':id')
   remove(@Param('id') id: string) {

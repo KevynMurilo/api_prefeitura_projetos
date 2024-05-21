@@ -13,7 +13,7 @@ import { UsersRepository } from './users.repository';
     PrismaModule,
     EmailModule,
     JwtModule.register({
-      secret: 'teste',
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '10m' },
     }),
   ],

@@ -1,4 +1,11 @@
-import { IsEmail, IsNotEmpty, IsPhoneNumber, Length } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsPhoneNumber,
+  Length,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class CreateUserDto {
   @IsNotEmpty({ message: 'Nome completo é obrigatório' })
@@ -24,7 +31,8 @@ export class CreateUserDto {
   telefone: string;
 
   @IsNotEmpty({ message: 'Senha é obrigatório' })
-  @Length(5, undefined, { message: 'Senha deve ter no mínimo  5 caracteres' })
+  @MinLength(8)
+  @MaxLength(20)
   senha: string;
 
   @IsNotEmpty({ message: 'Confirme sua senha é obrigatório' })
