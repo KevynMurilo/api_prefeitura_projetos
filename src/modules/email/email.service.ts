@@ -34,9 +34,11 @@ export class EmailService {
     to: string,
     verificationLink: string,
   ): Promise<void> {
+    const urlToken = `http://localhost:3000/users/verify?token=${verificationLink}`;
+
     const htmlEmail = this.verificationEmailTemplate.replace(
       '${verificationLink}',
-      verificationLink,
+      urlToken,
     );
 
     await this.transporter.sendMail({
@@ -44,6 +46,18 @@ export class EmailService {
       to,
       subject: 'Por favor, verifique seu e-mail',
       html: htmlEmail,
+    });
+  }
+
+  async sendPasswordResetEmail(email: string, resetToken: string) {
+    const resetUrl = `http://localhost:3000/users/reset-password?token=${resetToken}`;
+    const message = `Clique no link para redefinir sua senha: ${resetUrl}`;
+
+    await this.transporter.sendMail({
+      from: 'kevynmurilodev@gmail.com',
+      to: email,
+      subject: 'Redefinição de senha',
+      html: `<p>${message}</p>`,
     });
   }
 }

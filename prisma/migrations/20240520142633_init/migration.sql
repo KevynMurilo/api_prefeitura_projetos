@@ -1,11 +1,5 @@
-/*
-  Warnings:
-
-  - You are about to drop the `Usuarios` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropTable
-DROP TABLE "Usuarios";
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('USER', 'ADM');
 
 -- CreateTable
 CREATE TABLE "usuarios" (
@@ -14,8 +8,11 @@ CREATE TABLE "usuarios" (
     "email" TEXT NOT NULL,
     "telefone" TEXT NOT NULL,
     "senha" TEXT NOT NULL,
+    "email_verificado" BOOLEAN NOT NULL DEFAULT false,
     "role" "Role" NOT NULL DEFAULT 'USER',
-    "status" "Status" NOT NULL DEFAULT 'ATIVADO',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "deletedAt" TIMESTAMP(3),
 
     CONSTRAINT "usuarios_pkey" PRIMARY KEY ("id")
 );

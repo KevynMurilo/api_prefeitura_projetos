@@ -17,24 +17,29 @@ import { CreateUserDto } from './dto/create-user.dto';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
+  @Post('register')
   async sendVerificationEmail(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.sendVerificationEmail(createUserDto);
+    return this.usersService.create(createUserDto);
   }
 
-  @Get('confirm-email')
+  @Get('verify')
   async create(@Query('token') token: string) {
-    return await this.usersService.create(token);
+    return await this.usersService.verifyUser(token);
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async findAll() {
+    return await this.usersService.findAll();
+  }
+
+  @Get('deletados')
+  async findAllDeleted() {
+    return await this.usersService.findAllDeleted();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.usersService.findOne(+id);
   }
 
   // @Patch(':id')

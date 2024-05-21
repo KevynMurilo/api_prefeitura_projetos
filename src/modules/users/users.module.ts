@@ -6,6 +6,7 @@ import { PrismaService } from 'src/database/prisma.service';
 import { EmailModule } from '../email/email.module';
 import { EmailService } from '../email/email.service';
 import { JwtModule } from '@nestjs/jwt';
+import { UsersRepository } from './users.repository';
 
 @Module({
   imports: [
@@ -13,10 +14,10 @@ import { JwtModule } from '@nestjs/jwt';
     EmailModule,
     JwtModule.register({
       secret: 'teste',
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: '10m' },
     }),
   ],
   controllers: [UsersController],
-  providers: [UsersService, PrismaService, EmailService],
+  providers: [UsersService, PrismaService, EmailService, UsersRepository],
 })
 export class UsersModule {}
