@@ -7,26 +7,45 @@ import * as path from 'path';
 export class EmailService {
   private transporter: nodemailer.Transporter;
   private verificationEmailTemplate: string;
+  private resetPasswordEmailTemplate: string;
 
   constructor() {
     this.transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'kevynmurilodev@gmail.com',
-        pass: 'ybvc qteh dtvh qbpm',
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
     });
 
-    const templatePath = path.join(
+    const verificationTemplatePath = path.join(
       process.cwd(),
       'public',
       'verification-email.html',
     );
 
-    if (fs.existsSync(templatePath)) {
-      this.verificationEmailTemplate = fs.readFileSync(templatePath, 'utf-8');
+    const resetPasswordTemplatePath = path.join(
+      process.cwd(),
+      'public',
+      'reset-password-email.html',
+    );
+
+    if (fs.existsSync(verificationTemplatePath)) {
+      this.verificationEmailTemplate = fs.readFileSync(
+        verificationTemplatePath,
+        'utf-8',
+      );
     } else {
-      throw new Error(`File not found: ${templatePath}`);
+      throw new Error(`File not found: ${verificationTemplatePath}`);
+    }
+
+    if (fs.existsSync(resetPasswordTemplatePath)) {
+      this.resetPasswordEmailTemplate = fs.readFileSync(
+        resetPasswordTemplatePath,
+        'utf-8',
+      );
+    } else {
+      throw new Error(`File not found: ${resetPasswordTemplatePath}`);
     }
   }
 
@@ -42,22 +61,26 @@ export class EmailService {
     );
 
     await this.transporter.sendMail({
-      from: 'kevynmurilodev@gmail.com',
+      from: process.env.EMAIL_USER,
       to,
       subject: 'Por favor, verifique seu e-mail',
       html: htmlEmail,
     });
   }
 
-  async sendPasswordResetEmail(email: string, resetToken: string) {
-    const resetUrl = `http://localhost:3000/users/reset-password?token=${resetToken}`;
-    const message = `Clique no link para redefinir sua senha: ${resetUrl}`;
+  async sendPasswordResetEmail(to: string, resetToken: string): Promise<void> {
+    const resetLink = `http://localhost:3000/reset-password?token=${resetToken}`;
+
+    const htmlEmail = this.resetPasswordEmailTemplate.replace(
+      '${resetLink}',
+      resetLink,
+    );
 
     await this.transporter.sendMail({
       from: 'kevynmurilodev@gmail.com',
-      to: email,
-      subject: 'Redefinição de senha',
-      html: `<p>${message}</p>`,
+      to,
+      subject: 'Recuperação de senha',
+      html: htmlEmail,
     });
   }
 }
