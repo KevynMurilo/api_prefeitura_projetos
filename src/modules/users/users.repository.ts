@@ -6,11 +6,11 @@ export class UsersRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findByEmail(email: string) {
-    return this.prisma.usuarios.findUnique({ where: { email } });
+    return this.prisma.usuario.findUnique({ where: { email } });
   }
 
   async createUser(data: any) {
-    return this.prisma.usuarios.create({
+    return this.prisma.usuario.create({
       data,
       select: {
         id: true,
@@ -27,7 +27,7 @@ export class UsersRepository {
   }
 
   async updateUserById(id: number, data: any) {
-    return this.prisma.usuarios.update({
+    return this.prisma.usuario.update({
       where: {
         id,
         deletedAt: null,
@@ -48,7 +48,7 @@ export class UsersRepository {
   }
 
   async updateUserByEmail(email: string, data: any) {
-    return this.prisma.usuarios.update({
+    return this.prisma.usuario.update({
       where: {
         email,
       },
@@ -68,7 +68,7 @@ export class UsersRepository {
   }
 
   async updatePassword(id: number, senha: string) {
-    return this.prisma.usuarios.update({
+    return this.prisma.usuario.update({
       where: {
         id,
         deletedAt: null,
@@ -80,7 +80,7 @@ export class UsersRepository {
   }
 
   async findAllActiveUsers() {
-    return this.prisma.usuarios.findMany({
+    return this.prisma.usuario.findMany({
       where: {
         deletedAt: null,
       },
@@ -99,7 +99,7 @@ export class UsersRepository {
   }
 
   async findUserById(id: number) {
-    return this.prisma.usuarios.findUnique({
+    return this.prisma.usuario.findUnique({
       where: {
         id,
         deletedAt: null,
@@ -119,7 +119,7 @@ export class UsersRepository {
   }
 
   async findAllDeletedUsers() {
-    return this.prisma.usuarios.findMany({
+    return this.prisma.usuario.findMany({
       where: {
         deletedAt: { not: null },
       },
@@ -138,7 +138,7 @@ export class UsersRepository {
   }
 
   async deleteUserById(id: number) {
-    return this.prisma.usuarios.update({
+    return this.prisma.usuario.update({
       where: { id },
       data: { deletedAt: new Date() },
     });

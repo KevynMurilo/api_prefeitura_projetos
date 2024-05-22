@@ -18,7 +18,7 @@ enum Role {
   ADM
 }
 
-model Usuarios {
+model Usuario {
   id Int @id @default(autoincrement())
   nome_completo String
   email String @unique
@@ -29,6 +29,36 @@ model Usuarios {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
+  projetos Projeto[]
+  comentarios Comentario[]
 
   @@map("usuarios")
+}
+
+
+model Projeto {
+  id Int @id @default(autoincrement())
+  usuario Usuario @relation(fields: [id_usuario], references: [id])
+  id_usuario Int
+  nome_projeto String
+  descricao String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  comentarios Comentario[]
+
+  @@map("projetos")
+}
+
+model Comentario {
+  id Int @id @default(autoincrement())
+  usuario Usuario @relation(fields: [id_usuario], references: [id])
+  id_usuario Int
+  projeto Projeto @relation(fields: [id_projeto], references: [id])
+  id_projeto Int
+  text_comentario String
+  createdAt DateTime @default(now())
+  deletedAt DateTime?
+
+  @@map("comentarios")
 }
