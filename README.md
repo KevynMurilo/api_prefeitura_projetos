@@ -1,73 +1,132 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Sistema de Gerenciamento de Usuários com NestJS
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Este projeto é um sistema completo de gerenciamento de usuários, desenvolvido com **NestJS**, implementando autenticação, gerenciamento de permissões, envio de e-mails, e criptografia de senhas. Foi projetado com foco na escalabilidade, segurança e modularidade.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## ⚙️ Tecnologias Utilizadas
 
-## Description
+- **NestJS**: Framework Node.js para a construção de aplicações escaláveis.
+- **Prisma**: ORM utilizado para gerenciar a camada de dados.
+- **JWT**: Utilizado para autenticação e gerenciamento de sessões.
+- **Bcrypt**: Biblioteca de criptografia para senhas.
+- **Nodemailer**: Envio de e-mails para verificação e recuperação de senha.
+- **PostgreSQL**: Banco de dados relacional.
+- **Docker**: Contêinerização da aplicação para facilitar a distribuição e execução em diferentes ambientes.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 📁 Arquitetura do Projeto
 
-## Installation
+A arquitetura segue os princípios modulares do **NestJS**, permitindo uma separação clara de responsabilidades. Isso facilita a manutenção e escalabilidade do sistema, possibilitando a adição de novos módulos de forma isolada e sem impacto nos demais componentes.
+
+### Estrutura de Pastas
 
 ```bash
-$ yarn install
+src/
+│
+├── common/               # Utilidades comuns, como hashing de senhas
+├── database/             # Configuração do Prisma e conexão com o banco de dados
+├── email/                # Módulo de envio de e-mails
+├── users/                # Módulo de usuários
+│   ├── dto/              # Data Transfer Objects para validação de entradas
+│   ├── repository/       # Repositório de usuários utilizando Prisma
+│   ├── users.controller.ts # Controlador para as rotas de usuários
+│   ├── users.service.ts  # Lógica de negócios e regras de usuários
+│   └── users.module.ts   # Configuração e importação dos serviços do módulo
+├── main.ts               # Arquivo principal da aplicação
+└── ...                   # Outros módulos e arquivos auxiliares
 ```
 
-## Running the app
+## 🚀 Funcionalidades
+
+### 1. **Cadastro de Usuários**
+Permite a criação de novos usuários com dados como nome completo, e-mail, telefone e senha. A senha é criptografada com **Bcrypt** antes de ser armazenada no banco de dados.
 
 ```bash
-# development
-$ yarn run start
-
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
+POST /users/register
 ```
 
-## Test
+- Envia um e-mail de verificação para o usuário com um token JWT, garantindo a segurança do cadastro.
+
+### 2. **Autenticação e Verificação por E-mail**
+Após o cadastro, o usuário precisa verificar seu e-mail por meio de um link enviado automaticamente.
 
 ```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
+GET /users/verify?token=TOKEN
 ```
 
-## Support
+- O sistema valida o token JWT e ativa o usuário no sistema.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### 3. **Recuperação de Senha**
+Caso o usuário esqueça sua senha, ele pode solicitar a recuperação. Um e-mail com um link para redefinição é enviado.
 
-## Stay in touch
+```bash
+POST /users/sendEmailResetPassword
+```
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- Após clicar no link do e-mail, o usuário pode redefinir sua senha através da API.
 
-## License
+```bash
+POST /users/reset-password?token=TOKEN
+```
 
-Nest is [MIT licensed](LICENSE).
+### 4. **Atualização de Perfil de Usuário**
+Permite a atualização de informações pessoais como e-mail, nome completo e telefone. Caso o e-mail seja alterado, um novo e-mail de verificação é enviado.
+
+```bash
+PATCH /users/updateUser/:id
+```
+
+### 5. **Listagem de Usuários Ativos e Deletados**
+Permite visualizar todos os usuários cadastrados ou apenas aqueles que foram deletados.
+
+```bash
+GET /users
+GET /users/deletados
+```
+
+- Os usuários deletados podem ser restaurados pelo sistema.
+
+### 6. **Exclusão de Usuários**
+Permite a exclusão de usuários, alterando seu status para deletado, sem remover os dados permanentemente do banco.
+
+```bash
+DELETE /users/:id
+```
+
+## 🛠️ Configuração e Execução do Projeto
+
+### 1. Clone o Repositório
+
+```bash
+git clone https://github.com/usuario/nestjs-user-management.git
+cd nestjs-user-management
+```
+
+### 2. Instale as Dependências
+
+```bash
+npm install
+```
+
+### 3. Configure as Variáveis de Ambiente
+
+Crie um arquivo `.env` na raiz do projeto e adicione as seguintes variáveis:
+
+```bash
+DATABASE_URL=postgresql://user:password@localhost:5432/nome_db
+JWT_SECRET=seu_secret_jwt
+EMAIL_USER=seu_email@gmail.com
+EMAIL_PASS=sua_senha
+```
+
+### 4. Execute o Prisma Migrate
+
+```bash
+npx prisma migrate dev
+```
+
+### 5. Inicie o Projeto
+
+```bash
+npm run start:dev
+```
+
+A aplicação estará disponível em `http://localhost:3000`.
